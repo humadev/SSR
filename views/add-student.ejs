@@ -1,0 +1,385 @@
+<%- include('partials/header') %>
+
+<div class="container page-content">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb-nav">
+    <a href="/students" class="back-link">&larr; Back to Student Directory</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-current">Student Registration Form</span>
+  </nav>
+
+  <div class="profile-layout">
+    <!-- Form Card -->
+    <div class="profile-card">
+      <div class="form-header-banner">
+        <span class="section-tag">Interactive Student Input</span>
+        <h1 class="page-h1">Student Profile Registration</h1>
+        <p class="page-lead">
+          Fill in your details below. <strong>All fields are strictly required</strong> (including profile photo and all social media handles) to ensure a complete student record.
+        </p>
+      </div>
+
+      <div class="profile-body">
+        <% if (error) { %>
+          <div class="alert-box alert-error">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-text"><%= error %></div>
+          </div>
+        <% } %>
+
+        <div class="required-notice-strip">
+          <span>📌 <strong>Notice:</strong> Every field marked with <span class="required-star">*</span> is mandatory. The form will reject incomplete submissions.</span>
+        </div>
+
+        <!-- Note enctype="multipart/form-data" for file upload -->
+        <form action="/students" method="POST" enctype="multipart/form-data" class="student-form" id="studentForm">
+          
+          <!-- SECTION 1: PHOTO & IDENTITY -->
+          <div class="form-section-title">
+            <span class="section-num">1</span>
+            <h3>Identity & Photo</h3>
+          </div>
+
+          <div class="photo-upload-container">
+            <div class="photo-preview-box" id="photoPreviewBox">
+              <img id="photoPreviewImg" src="/images/default-avatar.svg" alt="Preview Avatar">
+            </div>
+            <div class="photo-input-group">
+              <label for="photoInput" class="form-label required">Upload Profile Photo</label>
+              <input 
+                type="file" 
+                id="photoInput" 
+                name="photo" 
+                accept="image/png, image/jpeg, image/webp, image/gif"
+                class="form-control-file"
+                required
+              >
+              <small class="form-hint">Accepted formats: JPG, PNG, WebP (Max: 5MB). Photo is saved into <code>/public/uploads/</code></small>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="nameInput" class="form-label required">Full Name</label>
+              <input 
+                type="text" 
+                id="nameInput" 
+                name="name" 
+                class="form-control" 
+                placeholder="e.g. Budi Pratama" 
+                value="<%= typeof formData !== 'undefined' && formData.name ? formData.name : '' %>"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="nimInput" class="form-label required">NIM (Student ID Number)</label>
+              <input 
+                type="text" 
+                id="nimInput" 
+                name="nim" 
+                class="form-control" 
+                placeholder="e.g. 202401015" 
+                value="<%= typeof formData !== 'undefined' && formData.nim ? formData.nim : '' %>"
+                required
+              >
+              <small class="form-hint">Unique student identifier</small>
+            </div>
+          </div>
+
+          <!-- SECTION 2: CONTACT & LOCATION -->
+          <div class="form-section-title">
+            <span class="section-num">2</span>
+            <h3>Contact Information</h3>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="emailInput" class="form-label required">Email Address</label>
+              <input 
+                type="email" 
+                id="emailInput" 
+                name="email" 
+                class="form-control" 
+                placeholder="e.g. budi.p@university.edu" 
+                value="<%= typeof formData !== 'undefined' && formData.email ? formData.email : '' %>"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="phoneInput" class="form-label required">Phone / WhatsApp</label>
+              <input 
+                type="tel" 
+                id="phoneInput" 
+                name="phone" 
+                class="form-control" 
+                placeholder="e.g. +62 812-3456-7890" 
+                value="<%= typeof formData !== 'undefined' && formData.phone ? formData.phone : '' %>"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="addressInput" class="form-label required">Residential Address</label>
+            <input 
+              type="text" 
+              id="addressInput" 
+              name="address" 
+              class="form-control" 
+              placeholder="e.g. Jl. Telekomunikasi No. 1, Bandung" 
+              value="<%= typeof formData !== 'undefined' && formData.address ? formData.address : '' %>"
+              required
+            >
+          </div>
+
+          <!-- SECTION 3: ACADEMIC & HOBBIES -->
+          <div class="form-section-title">
+            <span class="section-num">3</span>
+            <h3>Academic Background & Interests</h3>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label for="majorInput" class="form-label required">Major</label>
+              <select id="majorInput" name="major" class="form-control" required>
+                <option value="">-- Select Major --</option>
+                <% const selectedMajor = typeof formData !== 'undefined' ? formData.major : ''; %>
+                <% majors.forEach(m => { %>
+                  <option value="<%= m %>" <%= selectedMajor === m ? 'selected' : '' %>><%= m %></option>
+                <% }); %>
+                <option value="Artificial Intelligence" <%= selectedMajor === 'Artificial Intelligence' ? 'selected' : '' %>>Artificial Intelligence</option>
+                <option value="Information Systems" <%= selectedMajor === 'Information Systems' ? 'selected' : '' %>>Information Systems</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="yearInput" class="form-label required">Academic Year</label>
+              <% const selectedYear = typeof formData !== 'undefined' ? formData.year : 'Junior (Year 3)'; %>
+              <select id="yearInput" name="year" class="form-control" required>
+                <option value="Freshman (Year 1)" <%= selectedYear === 'Freshman (Year 1)' ? 'selected' : '' %>>Freshman (Year 1)</option>
+                <option value="Sophomore (Year 2)" <%= selectedYear === 'Sophomore (Year 2)' ? 'selected' : '' %>>Sophomore (Year 2)</option>
+                <option value="Junior (Year 3)" <%= selectedYear === 'Junior (Year 3)' ? 'selected' : '' %>>Junior (Year 3)</option>
+                <option value="Senior (Year 4)" <%= selectedYear === 'Senior (Year 4)' ? 'selected' : '' %>>Senior (Year 4)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="statusInput" class="form-label required">Status</label>
+              <% const selectedStatus = typeof formData !== 'undefined' ? formData.status : 'Active'; %>
+              <select id="statusInput" name="status" class="form-control" required>
+                <option value="Active" <%= selectedStatus === 'Active' ? 'selected' : '' %>>Active</option>
+                <option value="On Leave" <%= selectedStatus === 'On Leave' ? 'selected' : '' %>>On Leave</option>
+                <option value="Graduated" <%= selectedStatus === 'Graduated' ? 'selected' : '' %>>Graduated</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="gpaInput" class="form-label required">GPA (0.00 - 4.00)</label>
+              <input 
+                type="number" 
+                id="gpaInput" 
+                name="gpa" 
+                step="0.01" 
+                min="0.00" 
+                max="4.00" 
+                class="form-control" 
+                placeholder="e.g. 3.80"
+                value="<%= typeof formData !== 'undefined' && formData.gpa ? formData.gpa : '3.80' %>"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="hobbyInput" class="form-label required">Hobby / Extracurriculars</label>
+              <input 
+                type="text" 
+                id="hobbyInput" 
+                name="hobby" 
+                class="form-control" 
+                placeholder="e.g. Photography, Basketball, Chess, Gaming" 
+                value="<%= typeof formData !== 'undefined' && formData.hobby ? formData.hobby : '' %>"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="skillsInput" class="form-label required">Technical Skills (Comma-separated)</label>
+            <input 
+              type="text" 
+              id="skillsInput" 
+              name="skills" 
+              class="form-control" 
+              placeholder="e.g. Node.js, Express, EJS, HTML, CSS, PostgreSQL" 
+              value="<%= typeof formData !== 'undefined' && formData.skills ? formData.skills : '' %>"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="bioInput" class="form-label required">Short Biography</label>
+            <textarea 
+              id="bioInput" 
+              name="bio" 
+              rows="3" 
+              class="form-control" 
+              placeholder="Write a brief introduction about yourself and your tech journey..."
+              required
+            ><%= typeof formData !== 'undefined' && formData.bio ? formData.bio : '' %></textarea>
+          </div>
+
+          <!-- SECTION 4: SOCIAL MEDIA ACCOUNTS (ALL MANDATORY) -->
+          <div class="form-section-title">
+            <span class="section-num">4</span>
+            <h3>Social Media Handles (All Required)</h3>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="linkedinInput" class="form-label required">
+                <span class="social-icon-label">🔗 LinkedIn</span>
+              </label>
+              <input 
+                type="text" 
+                id="linkedinInput" 
+                name="linkedin" 
+                class="form-control" 
+                placeholder="e.g. linkedin.com/in/username or username" 
+                value="<%= typeof formData !== 'undefined' && formData.linkedin ? formData.linkedin : '' %>"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="instagramInput" class="form-label required">
+                <span class="social-icon-label">📸 Instagram</span>
+              </label>
+              <input 
+                type="text" 
+                id="instagramInput" 
+                name="instagram" 
+                class="form-control" 
+                placeholder="e.g. @username or instagram.com/username" 
+                value="<%= typeof formData !== 'undefined' && formData.instagram ? formData.instagram : '' %>"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="tiktokInput" class="form-label required">
+                <span class="social-icon-label">🎵 TikTok</span>
+              </label>
+              <input 
+                type="text" 
+                id="tiktokInput" 
+                name="tiktok" 
+                class="form-control" 
+                placeholder="e.g. @username or tiktok.com/@username" 
+                value="<%= typeof formData !== 'undefined' && formData.tiktok ? formData.tiktok : '' %>"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="xInput" class="form-label required">
+                <span class="social-icon-label">𝕏 X (formerly Twitter)</span>
+              </label>
+              <input 
+                type="text" 
+                id="xInput" 
+                name="x" 
+                class="form-control" 
+                placeholder="e.g. @username or x.com/username" 
+                value="<%= typeof formData !== 'undefined' && formData.x ? formData.x : '' %>"
+                required
+              >
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label for="facebookInput" class="form-label required">
+                <span class="social-icon-label">👥 Facebook</span>
+              </label>
+              <input 
+                type="text" 
+                id="facebookInput" 
+                name="facebook" 
+                class="form-control" 
+                placeholder="e.g. facebook.com/username or profile URL" 
+                value="<%= typeof formData !== 'undefined' && formData.facebook ? formData.facebook : '' %>"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-footer-buttons">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <span>🚀</span> Submit Profile to Express (POST)
+            </button>
+            <a href="/students" class="btn btn-ghost">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Educational Explanation Sidebar -->
+    <aside class="profile-sidebar">
+      <div class="info-card">
+        <div class="card-badge">Teacher Notes</div>
+        <h3 class="info-card-title">Full Form Validation in SSR</h3>
+        <p class="info-card-text">
+          How Express validates complete student records before storing:
+        </p>
+
+        <div class="code-box">
+          <div class="code-title">Server Validation Logic</div>
+          <pre><code>// 1. Client enforces HTML5 required
+// 2. Server enforces backend check:
+const missing = [];
+if (!req.file) missing.push('Photo');
+if (!req.body.name) missing.push('Name');
+if (!req.body.nim) missing.push('NIM');
+// ... all 18 fields checked
+
+if (missing.length > 0) {
+  return res.status(400).render(
+    'add-student', 
+    { error: 'Incomplete form', formData }
+  );
+}</code></pre>
+        </div>
+
+        <div class="teaching-points">
+          <div class="tp-item">
+            <span class="tp-check">1</span>
+            <div>
+              <strong>Two-Layer Validation:</strong>
+              <p>Client validation (<kbd>required</kbd>) provides instant feedback. Server validation protects against bypassed or curl requests.</p>
+            </div>
+          </div>
+
+          <div class="tp-item">
+            <span class="tp-check">2</span>
+            <div>
+              <strong>Preserving User Input:</strong>
+              <p>Passing <code>formData</code> back to the template ensures students don't lose their typed text if an error occurs.</p>
+            </div>
+          </div>
+
+          <div class="tp-item">
+            <span class="tp-check">3</span>
+            <div>
+              <strong>Saved to Static Folder:</strong>
+              <p>Uploaded photos are saved into <code>public/uploads/</code>, rendered via EJS on <code>/students/:id</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

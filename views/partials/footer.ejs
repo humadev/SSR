@@ -1,0 +1,50 @@
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div class="footer-col">
+        <div class="footer-brand">
+          <span class="brand-icon">⚡</span>
+          <h4>SSR Demo Teaching Project</h4>
+        </div>
+        <p class="footer-desc">
+          Built for students to learn how Node.js, Express, and EJS collaborate to deliver pre-rendered HTML from the server.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Key Express & EJS Concepts</h5>
+        <ul class="footer-list">
+          <li><code>app.set('view engine', 'ejs')</code></li>
+          <li><code>app.use(express.static('public'))</code></li>
+          <li><code>res.render('view', { data })</code></li>
+          <li><code>&lt;%= output %&gt;</code> vs <code>&lt;% code %&gt;</code></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Quick Student Demos</h5>
+        <ul class="footer-list">
+          <li><a href="/students">Render dynamic student list</a></li>
+          <li><a href="/students/new">Simulate form submission (POST)</a></li>
+          <li><a href="/api/students" target="_blank">View raw JSON API (CSR contrast)</a></li>
+          <li><a href="/does-not-exist">Test custom 404 handler</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <span>Server-Side Rendered on Node.js <%= process.version %></span>
+        <span class="client-timer">
+          Client Clock: <span id="clientTimeDisplay">--:--:--</span>
+          <span class="timer-hint">(Updates live via <code>/public/js/main.js</code>)</span>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Client-side JavaScript loaded statically from /public/js/main.js -->
+  <script src="/js/main.js"></script>
+</body>
+</html>

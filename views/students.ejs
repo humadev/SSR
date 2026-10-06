@@ -1,0 +1,206 @@
+<%- include('partials/header') %>
+
+<div class="container page-content">
+  <!-- Page Header -->
+  <div class="page-title-row">
+    <div>
+      <span class="section-tag">Server-Rendered Directory</span>
+      <h1 class="page-h1">Student Directory</h1>
+      <p class="page-lead">
+        Browse student profiles with photos, NIM, hobbies, and social handles. Pre-rendered on the server via EJS.
+      </p>
+    </div>
+
+    <div class="page-actions">
+      <a href="/students/new" class="btn btn-primary">
+        <span>➕</span> Register New Student
+      </a>
+      <a href="/api/students" target="_blank" class="btn btn-outline" title="See what a CSR API would return instead of HTML">
+        <span>🔌</span> View Raw JSON API
+      </a>
+    </div>
+  </div>
+
+  <!-- Server-Side Filter & Search Form -->
+  <div class="filter-card">
+    <form action="/students" method="GET" class="filter-form">
+      <div class="form-group flex-2">
+        <label for="searchInput" class="form-label">Search by Name, NIM, Email, Hobby, or Skill:</label>
+        <div class="input-icon-wrapper">
+          <span class="input-icon">🔍</span>
+          <input 
+            type="text" 
+            id="searchInput" 
+            name="search" 
+            class="form-control" 
+            placeholder="e.g. 202401001, Alex, Photography, Node..." 
+            value="<%= searchQuery %>"
+          >
+        </div>
+      </div>
+
+      <div class="form-group flex-1">
+        <label for="majorFilter" class="form-label">Filter by Major:</label>
+        <select id="majorFilter" name="major" class="form-control">
+          <option value="">-- All Majors --</option>
+          <% majors.forEach(m => { %>
+            <option value="<%= m %>" <%= majorFilter === m ? 'selected' : '' %>>
+              <%= m %>
+            </option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div class="form-group form-actions-inline">
+        <button type="submit" class="btn btn-primary btn-submit">
+          <span>⚡</span> Filter on Server
+        </button>
+        <% if (searchQuery || majorFilter) { %>
+          <a href="/students" class="btn btn-ghost" title="Reset Filters">Clear</a>
+        <% } %>
+      </div>
+    </form>
+
+    <!-- Query Info Pill -->
+    <div class="filter-meta">
+      <span class="filter-count">
+        Showing <strong><%= totalCount %></strong> student<%= totalCount === 1 ? '' : 's' %>
+      </span>
+      <% if (searchQuery || majorFilter) { %>
+        <span class="filter-active-pill">
+          Filtered by: 
+          <%= searchQuery ? `Search: "${searchQuery}"` : '' %>
+          <%= searchQuery && majorFilter ? ' + ' : '' %>
+          <%= majorFilter ? `Major: "${majorFilter}"` : '' %>
+        </span>
+      <% } %>
+      <span class="server-stamp">Generated at: <%= renderedAtReadable %></span>
+    </div>
+  </div>
+
+  <!-- Educational Code Snippet Accordion -->
+  <details class="code-explain-details">
+    <summary class="code-explain-summary">
+      <span>💡</span> See the EJS template code rendering this page
+    </summary>
+    <div class="code-explain-body">
+      <pre><code>&lt;!-- Inside views/students.ejs --&gt;
+&lt;% students.forEach(student =&gt; { %&gt;
+  &lt;div class="student-card"&gt;
+    &lt;!-- Photo or Avatar --&gt;
+    &lt;% if (student.photo) { %&gt;
+      &lt;img src="&lt;%= student.photo %&gt;" class="card-avatar-img"&gt;
+    &lt;% } %&gt;
+    &lt;span class="nim-tag"&gt;NIM: &lt;%= student.nim %&gt;&lt;/span&gt;
+    &lt;h3&gt;&lt;%= student.name %&gt;&lt;/h3&gt;
+    &lt;p&gt;Hobby: &lt;%= student.hobby %&gt;&lt;/p&gt;
+    &lt;a href="/students/&lt;%= student.id %&gt;"&gt;Full Profile&lt;/a&gt;
+  &lt;/div&gt;
+&lt;% }); %&gt;</code></pre>
+    </div>
+  </details>
+
+  <!-- Student Cards Grid -->
+  <% if (students.length === 0) { %>
+    <div class="empty-state-card">
+      <div class="empty-icon">📂</div>
+      <h3>No Students Found</h3>
+      <p>No student matched your search criteria. Try searching by name, NIM, or clearing the filter.</p>
+      <div class="empty-actions">
+        <a href="/students" class="btn btn-secondary">Reset Filters</a>
+        <a href="/students/new" class="btn btn-primary">Register a Student</a>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="students-grid">
+      <% students.forEach(student => { %>
+        <article class="student-card">
+          <div class="card-top">
+            <div class="avatar-circle <%= student.photo ? 'card-photo-avatar' : '' %>" style="background-color: <%= student.avatarBg %>;">
+              <% if (student.photo) { %>
+                <img src="<%= student.photo %>" alt="<%= student.name %> Photo" class="card-avatar-img">
+              <% } else { %>
+                <%= student.name.split(' ').map(n => n[0]).join('') %>
+              <% } %>
+            </div>
+            <div class="card-header-meta">
+              <span class="student-nim-pill">NIM: <%= student.nim %></span>
+              <span class="status-pill status-<%= student.status.toLowerCase().replace(/\s+/g, '-') %>">
+                <%= student.status %>
+              </span>
+            </div>
+          </div>
+
+          <h2 class="student-name">
+            <a href="/students/<%= student.id %>"><%= student.name %></a>
+          </h2>
+          
+          <div class="student-major-row">
+            <span class="major-name">🎓 <%= student.major %></span>
+            <span class="year-label"><%= student.year %></span>
+          </div>
+
+          <!-- Hobby Snippet -->
+          <% if (student.hobby) { %>
+            <div class="card-hobby-row">
+              <span class="hobby-icon">🎯</span>
+              <span class="hobby-text"><%= student.hobby %></span>
+            </div>
+          <% } %>
+
+          <p class="student-bio-excerpt">
+            <%= student.bio %>
+          </p>
+
+          <!-- Social Quick Icons -->
+          <div class="card-social-strip">
+            <% if (student.socials && student.socials.linkedin) { %>
+              <a href="<%= student.socials.linkedin %>" target="_blank" rel="noopener noreferrer" class="mini-soc-link" title="LinkedIn">🔗</a>
+            <% } %>
+            <% if (student.socials && student.socials.instagram) { %>
+              <a href="<%= student.socials.instagram %>" target="_blank" rel="noopener noreferrer" class="mini-soc-link" title="Instagram">📸</a>
+            <% } %>
+            <% if (student.socials && student.socials.tiktok) { %>
+              <a href="<%= student.socials.tiktok %>" target="_blank" rel="noopener noreferrer" class="mini-soc-link" title="TikTok">🎵</a>
+            <% } %>
+            <% if (student.socials && student.socials.x) { %>
+              <a href="<%= student.socials.x %>" target="_blank" rel="noopener noreferrer" class="mini-soc-link" title="X (Twitter)">𝕏</a>
+            <% } %>
+            <% if (student.socials && student.socials.facebook) { %>
+              <a href="<%= student.socials.facebook %>" target="_blank" rel="noopener noreferrer" class="mini-soc-link" title="Facebook">👥</a>
+            <% } %>
+          </div>
+
+          <div class="skills-wrap">
+            <% student.skills.slice(0, 3).forEach(skill => { %>
+              <span class="skill-tag"><%= skill %></span>
+            <% }); %>
+            <% if (student.skills.length > 3) { %>
+              <span class="skill-tag more-tag">+<%= student.skills.length - 3 %></span>
+            <% } %>
+          </div>
+
+          <div class="card-footer-stats">
+            <div class="gpa-box">
+              <span class="gpa-label">GPA</span>
+              <span class="gpa-val <%= student.gpa >= 3.8 ? 'gpa-honor' : '' %>">
+                <%= Number(student.gpa).toFixed(2) %>
+              </span>
+            </div>
+
+            <div class="card-links">
+              <a href="/students/<%= student.id %>" class="btn-card-primary">
+                View Full Profile &rarr;
+              </a>
+              <a href="/api/students/<%= student.id %>" target="_blank" class="btn-card-api" title="Inspect raw JSON">
+                JSON
+              </a>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'SSR Demo Classroom' %></title>
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Static CSS served from /public/css/style.css -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="/" class="brand-logo">
+        <span class="brand-icon">⚡</span>
+        <div class="brand-text">
+          <span class="brand-title">SSR Explorer</span>
+          <span class="brand-subtitle">Node.js + Express + EJS</span>
+        </div>
+      </a>
+
+      <nav class="main-nav">
+        <ul class="nav-links">
+          <li>
+            <a href="/" class="nav-link <%= currentPath === '/' ? 'active' : '' %>">
+              <span class="nav-icon">📖</span> Concept & Flow
+            </a>
+          </li>
+          <li>
+            <a href="/students" class="nav-link <%= currentPath === '/students' ? 'active' : '' %>">
+              <span class="nav-icon">👥</span> Student Directory
+            </a>
+          </li>
+          <li>
+            <a href="/students/new" class="nav-link <%= currentPath === '/students/new' ? 'active' : '' %>">
+              <span class="nav-icon">➕</span> Add Student (POST)
+            </a>
+          </li>
+          <li>
+            <a href="/api/students" target="_blank" class="nav-link api-link">
+              <span class="nav-icon">🔌</span> Compare JSON API <span class="external-pill">raw</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="server-status-pill" title="This timestamp was stamped on the server before the HTML was dispatched!">
+        <span class="pulse-dot"></span>
+        <span class="pill-label">Server Stamped:</span>
+        <span class="pill-time"><%= requestTime %></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Educational Banner for Students -->
+  <div class="ssr-proof-bar">
+    <div class="container ssr-proof-content">
+      <div class="proof-tag">
+        <span class="proof-badge">SSR PROOF</span>
+        <span>Right click and select <strong>"View Page Source"</strong> (<kbd>Ctrl+U</kbd> or <kbd>Cmd+Option+U</kbd>) to confirm all HTML was pre-built by Node.js!</span>
+      </div>
+      <button id="toggleGuideBtn" class="btn-micro" type="button">
+        💡 Why SSR Matters
+      </button>
+    </div>
+  </div>
+
+  <!-- Educational Drawer/Modal (toggled by client JS) -->
+  <aside id="ssrGuideDrawer" class="guide-drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <h3>🚀 Quick SSR Cheatsheet</h3>
+      <button id="closeDrawerBtn" class="btn-close" aria-label="Close guide">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <div class="guide-section">
+        <h4>1. Server-Side Rendering (SSR)</h4>
+        <p>Express reads the data, runs the <code>.ejs</code> template on the server, and sends <strong>ready-to-view HTML</strong>. The browser does not need to execute JS to see the content.</p>
+      </div>
+      <div class="guide-section">
+        <h4>2. Client-Side Rendering (CSR)</h4>
+        <p>The server sends an almost empty HTML container (<code>&lt;div id="root"&gt;&lt;/div&gt;</code>) plus large JS bundle. The client downloads JS, makes a fetch request to <code>/api/students</code>, and builds the UI inside the browser.</p>
+      </div>
+      <div class="guide-section">
+        <h4>3. Static Files (The <code>public/</code> folder)</h4>
+        <p>CSS, client-side JS, and images don't change per user. Express serves them untouched using <code>app.use(express.static('public'))</code>.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="page-main">

@@ -1,0 +1,228 @@
+<%- include('partials/header') %>
+
+<div class="container page-content">
+  <!-- Breadcrumb & Back Link -->
+  <nav class="breadcrumb-nav">
+    <a href="/students" class="back-link">&larr; Back to Student Directory</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-current"><%= student.name %> (NIM: <%= student.nim %>)</span>
+  </nav>
+
+  <div class="profile-layout">
+    <!-- Main Student Profile Card -->
+    <article class="profile-card">
+      <!-- Banner -->
+      <div class="profile-header-banner" style="background: linear-gradient(135deg, <%= student.avatarBg %>, #1e1b4b);">
+        <div class="profile-avatar-large <%= student.photo ? 'has-photo' : '' %>" style="border-color: <%= student.avatarBg %>;">
+          <% if (student.photo) { %>
+            <img src="<%= student.photo %>" alt="<%= student.name %> Photo" class="profile-avatar-img">
+          <% } else { %>
+            <span class="avatar-initials"><%= student.name.split(' ').map(n => n[0]).join('') %></span>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="profile-body">
+        <div class="profile-title-area">
+          <div>
+            <div class="nim-title-badge">NIM: <%= student.nim %></div>
+            <h1 class="profile-name"><%= student.name %></h1>
+            <p class="profile-subtitle">🎓 <%= student.major %> &bull; <%= student.year %></p>
+          </div>
+          <span class="status-pill status-<%= student.status.toLowerCase().replace(/\s+/g, '-') %> large">
+            <%= student.status %>
+          </span>
+        </div>
+
+        <!-- Meta Grid -->
+        <div class="profile-meta-grid">
+          <div class="profile-stat-box">
+            <span class="stat-label">NIM</span>
+            <span class="stat-value font-mono"><%= student.nim %></span>
+          </div>
+
+          <div class="profile-stat-box">
+            <span class="stat-label">Cumulative GPA</span>
+            <span class="stat-value <%= student.gpa >= 3.8 ? 'gpa-honor' : '' %>">
+              <%= Number(student.gpa).toFixed(2) %>
+              <% if (student.gpa >= 3.8) { %>
+                <span class="honor-tag">Dean's List</span>
+              <% } %>
+            </span>
+          </div>
+
+          <div class="profile-stat-box">
+            <span class="stat-label">Phone / WhatsApp</span>
+            <span class="stat-value stat-phone">
+              <a href="tel:<%= student.phone %>"><%= student.phone || 'Not provided' %></a>
+            </span>
+          </div>
+
+          <div class="profile-stat-box">
+            <span class="stat-label">Official Email</span>
+            <span class="stat-value stat-email">
+              <a href="mailto:<%= student.email %>"><%= student.email %></a>
+            </span>
+          </div>
+        </div>
+
+        <!-- Address & Hobby Strip -->
+        <div class="profile-info-strip">
+          <div class="info-strip-item">
+            <span class="info-strip-icon">📍</span>
+            <div>
+              <span class="info-strip-label">Address</span>
+              <p class="info-strip-text"><%= student.address || 'Campus Residence' %></p>
+            </div>
+          </div>
+          <div class="info-strip-item">
+            <span class="info-strip-icon">🎯</span>
+            <div>
+              <span class="info-strip-label">Hobby & Interests</span>
+              <p class="info-strip-text"><%= student.hobby || 'Coding & Tech' %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media Profiles Section -->
+        <section class="profile-section">
+          <h3 class="section-heading">🌐 Social Media Accounts</h3>
+          <div class="social-links-grid">
+            <% if (student.socials && student.socials.linkedin) { %>
+              <a href="<%= student.socials.linkedin %>" target="_blank" rel="noopener noreferrer" class="social-pill social-linkedin">
+                <span class="soc-icon">🔗</span>
+                <div class="soc-text">
+                  <span class="soc-name">LinkedIn</span>
+                  <span class="soc-handle">View Profile &rarr;</span>
+                </div>
+              </a>
+            <% } %>
+
+            <% if (student.socials && student.socials.instagram) { %>
+              <a href="<%= student.socials.instagram %>" target="_blank" rel="noopener noreferrer" class="social-pill social-instagram">
+                <span class="soc-icon">📸</span>
+                <div class="soc-text">
+                  <span class="soc-name">Instagram</span>
+                  <span class="soc-handle">@Follow &rarr;</span>
+                </div>
+              </a>
+            <% } %>
+
+            <% if (student.socials && student.socials.tiktok) { %>
+              <a href="<%= student.socials.tiktok %>" target="_blank" rel="noopener noreferrer" class="social-pill social-tiktok">
+                <span class="soc-icon">🎵</span>
+                <div class="soc-text">
+                  <span class="soc-name">TikTok</span>
+                  <span class="soc-handle">Watch Videos &rarr;</span>
+                </div>
+              </a>
+            <% } %>
+
+            <% if (student.socials && student.socials.x) { %>
+              <a href="<%= student.socials.x %>" target="_blank" rel="noopener noreferrer" class="social-pill social-x">
+                <span class="soc-icon">𝕏</span>
+                <div class="soc-text">
+                  <span class="soc-name">X (Twitter)</span>
+                  <span class="soc-handle">@Profile &rarr;</span>
+                </div>
+              </a>
+            <% } %>
+
+            <% if (student.socials && student.socials.facebook) { %>
+              <a href="<%= student.socials.facebook %>" target="_blank" rel="noopener noreferrer" class="social-pill social-facebook">
+                <span class="soc-icon">👥</span>
+                <div class="soc-text">
+                  <span class="soc-name">Facebook</span>
+                  <span class="soc-handle">Connect &rarr;</span>
+                </div>
+              </a>
+            <% } %>
+
+            <% const hasAnySocial = student.socials && (student.socials.linkedin || student.socials.instagram || student.socials.tiktok || student.socials.x || student.socials.facebook); %>
+            <% if (!hasAnySocial) { %>
+              <p class="text-muted-italics">No social media handles registered yet.</p>
+            <% } %>
+          </div>
+        </section>
+
+        <!-- Biography -->
+        <section class="profile-section">
+          <h3 class="section-heading">Student Biography</h3>
+          <p class="profile-bio-text"><%= student.bio %></p>
+        </section>
+
+        <!-- Skills -->
+        <section class="profile-section">
+          <h3 class="section-heading">Areas of Technical Expertise</h3>
+          <div class="skills-wrap large-skills">
+            <% student.skills.forEach(skill => { %>
+              <span class="skill-tag"><%= skill %></span>
+            <% }); %>
+          </div>
+        </section>
+
+        <div class="profile-actions-footer">
+          <a href="/students" class="btn btn-secondary">&larr; Return to Directory</a>
+          <a href="/students/new" class="btn btn-primary">➕ Register Another Student</a>
+          <a href="/api/students/<%= student.id %>" target="_blank" class="btn btn-outline">
+            <span>🔌</span> Inspect Raw JSON API
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Educational Explanation Sidebar -->
+    <aside class="profile-sidebar">
+      <div class="info-card">
+        <div class="card-badge">Behind The Scenes</div>
+        <h3 class="info-card-title">How EJS Rendered This Page</h3>
+        <p class="info-card-text">
+          Express matched the route <code>/students/<%= student.id %></code>, pulled this student record from memory, and injected all fields directly into HTML:
+        </p>
+
+        <div class="code-box">
+          <div class="code-title">Server Code Rendering HTML</div>
+          <pre><code>// Dynamic photo rendering in EJS
+&lt;% if (student.photo) { %&gt;
+  &lt;img src="&lt;%= student.photo %&gt;"&gt;
+&lt;% } else { %&gt;
+  &lt;span&gt;&lt;%= initials %&gt;&lt;/span&gt;
+&lt;% } %&gt;
+
+// Social links rendered via condition:
+&lt;% if (student.socials.instagram) { %&gt;
+  &lt;a href="&lt;%= student.socials.instagram %&gt;"&gt;
+&lt;% } %&gt;</code></pre>
+        </div>
+
+        <div class="teaching-points">
+          <div class="tp-item">
+            <span class="tp-check">✓</span>
+            <div>
+              <strong>Static Photo Serving:</strong>
+              <p>Uploaded photos stored in <code>public/uploads/</code> are served as normal static files by Express without database overhead.</p>
+            </div>
+          </div>
+
+          <div class="tp-item">
+            <span class="tp-check">✓</span>
+            <div>
+              <strong>Conditional EJS Rendering:</strong>
+              <p>Notice that social media badges only appear if the student filled in that particular handle.</p>
+            </div>
+          </div>
+
+          <div class="tp-item">
+            <span class="tp-check">✓</span>
+            <div>
+              <strong>Server Timestamp:</strong>
+              <p>Rendered at <strong><%= renderedAtReadable %></strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

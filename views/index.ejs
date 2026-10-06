@@ -1,0 +1,229 @@
+<%- include('partials/header') %>
+
+<div class="container page-content">
+  <!-- Hero Section -->
+  <section class="hero-card">
+    <div class="hero-badge">Web Architecture 101</div>
+    <h1 class="hero-title">How Server-Side Rendering (SSR) Works</h1>
+    <p class="hero-subtitle">
+      In <strong>Server-Side Rendering</strong>, your server generates the complete HTML page with all data already inserted before sending it to the student's browser.
+    </p>
+
+    <div class="hero-actions">
+      <a href="/students" class="btn btn-primary">
+        <span>👥</span> Explore Student Directory
+      </a>
+      <a href="/students/new" class="btn btn-secondary">
+        <span>➕</span> Try Form Submission
+      </a>
+      <a href="/api/students" target="_blank" class="btn btn-outline">
+        <span>🔌</span> Inspect Raw JSON API
+      </a>
+    </div>
+
+    <div class="meta-strip">
+      <div class="meta-item">
+        <span class="meta-label">View Engine</span>
+        <span class="meta-value">EJS (Embedded JavaScript)</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Server Framework</span>
+        <span class="meta-value">Express 5.x</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Static Assets Folder</span>
+        <span class="meta-value"><code>/public</code></span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Rendered Timestamp</span>
+        <span class="meta-value highlight"><%= renderedAtReadable %></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visual Architecture Flow -->
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-tag">Sequence Flow</span>
+      <h2 class="section-title">The 4-Step SSR Request Lifecycle</h2>
+      <p class="section-description">
+        Watch how a request moves from the browser into Express, through EJS, and back.
+      </p>
+    </div>
+
+    <div class="flow-grid">
+      <div class="flow-card step-1">
+        <div class="step-number">1</div>
+        <div class="step-icon">🌐</div>
+        <h3 class="step-title">Browser Request</h3>
+        <p class="step-desc">
+          The user types <code>http://localhost:3000/students</code> into their address bar. An HTTP <code>GET</code> request travels to the Express server.
+        </p>
+        <div class="code-preview">GET /students HTTP/1.1</div>
+      </div>
+
+      <div class="flow-card step-2">
+        <div class="step-number">2</div>
+        <div class="step-icon">📦</div>
+        <h3 class="step-title">Data Fetching</h3>
+        <p class="step-desc">
+          Express route handler runs. It pulls student records from memory, a file, or database (<code>data/students.js</code>).
+        </p>
+        <div class="code-preview">const students = getAllStudents();</div>
+      </div>
+
+      <div class="flow-card step-3">
+        <div class="step-number">3</div>
+        <div class="step-icon">⚙️</div>
+        <h3 class="step-title">EJS Compilation</h3>
+        <p class="step-desc">
+          Express calls <code>res.render('students', { students })</code>. EJS executes JavaScript loops and outputs pure HTML.
+        </p>
+        <div class="code-preview">res.render('students', { students });</div>
+      </div>
+
+      <div class="flow-card step-4">
+        <div class="step-number">4</div>
+        <div class="step-icon">🚀</div>
+        <h3 class="step-title">Browser Receives HTML</h3>
+        <p class="step-desc">
+          The browser receives 100% finished HTML. Search engine crawlers can index it, and users see content without waiting for client JS.
+        </p>
+        <div class="code-preview">&lt;div class="student-card"&gt;...&lt;/div&gt;</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Side-by-Side Comparison: SSR vs CSR -->
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-tag">Comparison</span>
+      <h2 class="section-title">Server-Side Rendering (SSR) vs Client-Side Rendering (CSR)</h2>
+    </div>
+
+    <div class="comparison-grid">
+      <!-- SSR Card -->
+      <div class="comparison-card highlight-ssr">
+        <div class="card-badge ssr">This Demo App (SSR)</div>
+        <h3>Server-Side Rendering</h3>
+        <p class="card-lead">HTML is composed on the <strong>Server</strong></p>
+        <ul class="comparison-list">
+          <li><strong>Initial Load:</strong> Very fast First Contentful Paint (FCP). The browser immediately displays text & images.</li>
+          <li><strong>SEO:</strong> Perfect. Search engine robots see all content right away in the first HTTP response.</li>
+          <li><strong>Initial Payload:</strong> HTML document contains the actual content.</li>
+          <li><strong>JavaScript Requirement:</strong> Content is visible even if client JavaScript is disabled!</li>
+          <li><strong>Tech Stack:</strong> Express + EJS, Pug, Handlebars, Next.js (SSR), Nuxt.</li>
+        </ul>
+        <div class="comparison-sample">
+          <div class="sample-title">What the browser receives:</div>
+          <pre><code>&lt;!-- Pre-rendered HTML with actual data --&gt;
+&lt;h3&gt;Alex Rivera&lt;/h3&gt;
+&lt;p&gt;Major: Computer Science&lt;/p&gt;
+&lt;span class="badge"&gt;GPA: 3.85&lt;/span&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- CSR Card -->
+      <div class="comparison-card highlight-csr">
+        <div class="card-badge csr">Single Page Apps (CSR)</div>
+        <h3>Client-Side Rendering</h3>
+        <p class="card-lead">HTML is composed in the <strong>Browser</strong></p>
+        <ul class="comparison-list">
+          <li><strong>Initial Load:</strong> Often shows a blank screen or spinner while downloading large JS bundles.</li>
+          <li><strong>SEO:</strong> Needs specialized crawler rendering or pre-rendering services.</li>
+          <li><strong>Initial Payload:</strong> Nearly empty HTML shell + heavy bundled JS file.</li>
+          <li><strong>JavaScript Requirement:</strong> If JavaScript fails or is turned off, the user sees nothing.</li>
+          <li><strong>Tech Stack:</strong> React SPA (Vite/CRA), Vue SPA, Angular SPA.</li>
+        </ul>
+        <div class="comparison-sample">
+          <div class="sample-title">What the browser receives:</div>
+          <pre><code>&lt;!-- Empty container shell --&gt;
+&lt;div id="root"&gt;&lt;/div&gt;
+&lt;script src="/bundle.js"&gt;&lt;/script&gt;
+&lt;!-- JS then calls fetch('/api/students') --&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Student Experiments Section -->
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-tag">Interactive Classroom Lab</span>
+      <h2 class="section-title">3 Experiments To Prove SSR In Class</h2>
+    </div>
+
+    <div class="experiments-grid">
+      <div class="experiment-card">
+        <div class="exp-icon">🔍</div>
+        <h3>Test 1: View Page Source</h3>
+        <p>Press <kbd>Ctrl+U</kbd> (Windows) or <kbd>Cmd+Option+U</kbd> (Mac) on the <a href="/students">/students</a> page. Search for any student name like <em>"Alex Rivera"</em>.</p>
+        <div class="exp-result">
+          <span class="status-check">✓ Observation:</span> The name appears directly inside the raw HTML from the server!
+        </div>
+      </div>
+
+      <div class="experiment-card">
+        <div class="exp-icon">🌐</div>
+        <h3>Test 2: Network Tab Inspector</h3>
+        <p>Open DevTools (<kbd>F12</kbd>), click <strong>Network</strong> tab, filter by <strong>Doc</strong>, and refresh. Click the <code>students</code> request and inspect the <strong>Response</strong> tab.</p>
+        <div class="exp-result">
+          <span class="status-check">✓ Observation:</span> No separate AJAX/fetch call was needed to render the student records.
+        </div>
+      </div>
+
+      <div class="experiment-card">
+        <div class="exp-icon">🚫</div>
+        <h3>Test 3: Disable JavaScript</h3>
+        <p>Open DevTools settings (<kbd>F1</kbd>) &rarr; check <em>"Disable JavaScript"</em>. Refresh the page.</p>
+        <div class="exp-result">
+          <span class="status-check">✓ Observation:</span> All student cards, text, and layouts still display completely!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EJS Syntax Cheat Sheet for Students -->
+  <section class="section-block syntax-block">
+    <div class="section-header">
+      <span class="section-tag">EJS Syntax Reference</span>
+      <h2 class="section-title">Essential EJS Tags Used In This Demo</h2>
+    </div>
+
+    <div class="table-responsive">
+      <table class="syntax-table">
+        <thead>
+          <tr>
+            <th>Tag Syntax</th>
+            <th>Name & Purpose</th>
+            <th>Example in this Project</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>&lt;%= ... %&gt;</code></td>
+            <td><strong>Escaped Output:</strong> Evaluates value and prints safe HTML text</td>
+            <td><code>&lt;h2&gt;&lt;%= student.name %&gt;&lt;/h2&gt;</code></td>
+          </tr>
+          <tr>
+            <td><code>&lt;% ... %&gt;</code></td>
+            <td><strong>Scriptlet (Control Flow):</strong> Runs JS loops, if/else without printing output</td>
+            <td><code>&lt;% students.forEach(s =&gt; { %&gt; ... &lt;% }) %&gt;</code></td>
+          </tr>
+          <tr>
+            <td><code>&lt;%- ... %&gt;</code></td>
+            <td><strong>Raw Output / Includes:</strong> Injects unescaped HTML or partial templates</td>
+            <td><code>&lt;%- include('partials/header') %&gt;</code></td>
+          </tr>
+          <tr>
+            <td><code>&lt;%# ... %&gt;</code></td>
+            <td><strong>EJS Comment:</strong> Server-side comment (not visible in final HTML source)</td>
+            <td><code>&lt;%# This comment never reaches browser %&gt;</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<%- include('partials/footer') %>
